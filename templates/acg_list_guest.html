@@ -1,0 +1,98 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>嘉宾相关漫展</title>
+            <style>
+                body { font-family: "Microsoft YaHei", Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+                #app { max-width: 600px; margin: 0 auto; }
+                .header { text-align: center; margin-bottom: 20px; color: #333; }
+                .tip { text-align: center; color: #666; font-size: 12px; margin-bottom: 20px; }
+                .guest-section { margin-bottom: 30px; }
+                .guest-header { background: #9b59b6; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+                .guest-name { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+                .guest-desc { font-size: 14px; opacity: 0.9; }
+                .event-card { background: white; border-radius: 8px; margin: 10px 0; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                .event-title { font-weight: bold; font-size: 16px; color: #333; margin-bottom: 8px; }
+                .event-time { color: #e74c3c; font-size: 14px; margin-bottom: 5px; }
+                .event-location { color: #666; font-size: 14px; margin-bottom: 5px; }
+                .event-price { color: #27ae60; font-weight: bold; margin-bottom: 5px; }
+                .event-meta { font-size: 12px; color: #999; }
+                .npc-badge { background: #3498db; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+                .no-npc-badge { background: #95a5a6; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+            </style>
+        </head>
+        <body>
+            <div id="app">
+                <div class="header">
+                    <h2>嘉宾相关漫展</h2>
+                </div>
+                <div class="tip">
+                    发送 "漫展详情 展会id" 查看详细信息<br>
+                    发送 "漫展位置 展会id" 查看位置信息
+                </div>
+                <div id="content">
+                    <!-- 内容将在这里渲染 -->
+                </div>
+            </div>
+            <script>
+                const events = @@acg_list@@;
+                const guests = @@guest_list@@;
+                const container = document.getElementById('content');
+                
+                // 按嘉宾分组事件
+                const eventsByGuest = {};
+                events.forEach(event => {
+                    const guestId = event.guest ? event.guest.id : 'unknown';
+                    if (!eventsByGuest[guestId]) {
+                        eventsByGuest[guestId] = [];
+                    }
+                    eventsByGuest[guestId].push(event);
+                });
+                
+                // 渲染每个嘉宾的相关漫展
+                guests.forEach(guest => {
+                    const guestEvents = eventsByGuest[guest.id] || [];
+                    
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.className = 'guest-section';
+                    
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'guest-header';
+                    headerDiv.innerHTML = `
+                        <div class="guest-name">${guest.name}</div>
+                        <div class="guest-desc">${guest.description || '暂无描述'}</div>
+                    `;
+                    
+                    sectionDiv.appendChild(headerDiv);
+                    
+                    guestEvents.forEach(event => {
+                        const card = document.createElement('div');
+                        card.className = 'event-card';
+                        
+                        const npcBadge = event.has_npc === 1 
+                            ? '<span class="npc-badge">有NPC招募</span>'
+                            : '<span class="no-npc-badge">无NPC招募</span>';
+                        
+                        card.innerHTML = `
+                            <div class="event-title">${event.project_name}</div>
+                            <div class="event-time">📅 ${event.start_time} - ${event.end_time}</div>
+                            <div class="event-location">📍 ${event.city} - ${event.venue_name}</div>
+                            <div class="event-price">💰 ￥${event.min_price/100} - ${event.max_price/100}</div>
+                            <div class="event-meta">
+                                ${npcBadge}
+                                <span style="margin-left: 10px;">❤️ ${event.like_count}</span>
+                                <span style="margin-left: 10px;">ID: ${event.id}</span>
+                            </div>
+                        `;
+                        
+                        sectionDiv.appendChild(card);
+                    });
+                    
+                    container.appendChild(sectionDiv);
+                });
+            </script>
+        </body>
+        </html>
+        

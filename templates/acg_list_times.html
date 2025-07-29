@@ -1,0 +1,98 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>漫展日历</title>
+            <style>
+                body { font-family: "Microsoft YaHei", Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+                #app { max-width: 600px; margin: 0 auto; }
+                .header { text-align: center; margin-bottom: 20px; color: #333; }
+                .tip { text-align: center; color: #666; font-size: 12px; margin-bottom: 20px; }
+                .time-group { margin-bottom: 30px; }
+                .time-header { background: #3498db; color: white; padding: 10px; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
+                .event-card { background: white; border-radius: 8px; margin: 10px 0; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                .event-title { font-weight: bold; font-size: 16px; color: #333; margin-bottom: 8px; }
+                .event-time { color: #e74c3c; font-size: 14px; margin-bottom: 5px; }
+                .event-location { color: #666; font-size: 14px; margin-bottom: 5px; }
+                .event-price { color: #27ae60; font-weight: bold; margin-bottom: 5px; }
+                .event-meta { font-size: 12px; color: #999; }
+                .npc-badge { background: #3498db; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+                .no-npc-badge { background: #95a5a6; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+            </style>
+        </head>
+        <body>
+            <div id="app">
+                <div class="header">
+                    <h2>漫展日历</h2>
+                </div>
+                <div class="tip">
+                    发送 "漫展详情 展会id" 查看详细信息<br>
+                    发送 "漫展位置 展会id" 查看位置信息
+                </div>
+                <div id="time-groups">
+                    <!-- 时间分组将在这里渲染 -->
+                </div>
+            </div>
+            <script>
+                const timeGroups = @@acg_list@@;
+                const container = document.getElementById('time-groups');
+                
+                function calculateDaysUntil(dateStr) {
+                    if (dateStr === '进行中') return 0;
+                    try {
+                        const targetDate = new Date(dateStr.split(' ')[0]);
+                        const currentDate = new Date();
+                        const diffTime = targetDate - currentDate;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        return Math.max(0, diffDays);
+                    } catch {
+                        return 0;
+                    }
+                }
+                
+                Object.keys(timeGroups).forEach(timeKey => {
+                    const events = timeGroups[timeKey];
+                    const daysUntil = calculateDaysUntil(timeKey);
+                    
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'time-group';
+                    
+                    const headerDiv = document.createElement('div');
+                    headerDiv.className = 'time-header';
+                    headerDiv.textContent = `${timeKey} 共 ${events.length} 场`;
+                    if (daysUntil > 0) {
+                        headerDiv.textContent += ` (距离开始还有 ${daysUntil} 天)`;
+                    }
+                    
+                    groupDiv.appendChild(headerDiv);
+                    
+                    events.forEach(event => {
+                        const card = document.createElement('div');
+                        card.className = 'event-card';
+                        
+                        const npcBadge = event.has_npc === 1 
+                            ? '<span class="npc-badge">有NPC招募</span>'
+                            : '<span class="no-npc-badge">无NPC招募</span>';
+                        
+                        card.innerHTML = `
+                            <div class="event-title">${event.project_name}</div>
+                            <div class="event-time">📅 ${event.start_time} - ${event.end_time}</div>
+                            <div class="event-location">📍 ${event.city} - ${event.venue_name}</div>
+                            <div class="event-price">💰 ￥${event.min_price/100} - ${event.max_price/100}</div>
+                            <div class="event-meta">
+                                ${npcBadge}
+                                <span style="margin-left: 10px;">❤️ ${event.like_count}</span>
+                                <span style="margin-left: 10px;">ID: ${event.id}</span>
+                            </div>
+                        `;
+                        
+                        groupDiv.appendChild(card);
+                    });
+                    
+                    container.appendChild(groupDiv);
+                });
+            </script>
+        </body>
+        </html>
+        

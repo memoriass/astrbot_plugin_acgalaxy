@@ -1,0 +1,62 @@
+{
+  "api_base_url": {
+    "description": "漫展信息API基础URL",
+    "type": "string",
+    "hint": "漫展信息API的基础URL地址",
+    "default": "https://acg.s1f.ren"
+  },
+  "enable_image_render": {
+    "description": "启用图片渲染",
+    "type": "bool",
+    "hint": "是否生成图片格式的漫展信息展示",
+    "default": true
+  },
+  "request_timeout": {
+    "description": "请求超时时间(秒)",
+    "type": "int",
+    "hint": "API请求的超时时间",
+    "default": 30
+  },
+  "max_results_per_page": {
+    "description": "每页最大结果数",
+    "type": "int",
+    "hint": "单次查询返回的最大结果数量",
+    "default": 100
+  },
+  "image_width": {
+    "description": "生成图片宽度",
+    "type": "int",
+    "hint": "生成图片的宽度像素",
+    "default": 625
+  },
+  "image_scale_factor": {
+    "description": "图片缩放因子",
+    "type": "float",
+    "hint": "图片渲染的缩放因子，影响清晰度",
+    "default": 1.0
+  },
+  "cache_expire_time": {
+    "description": "缓存过期时间(分钟)",
+    "type": "int",
+    "hint": "漫展信息缓存的过期时间，0表示禁用缓存",
+    "default": 30
+  },
+  "enable_location_service": {
+    "description": "启用位置服务",
+    "type": "bool",
+    "hint": "是否提供漫展位置信息查询",
+    "default": true
+  },
+  "default_city": {
+    "description": "默认城市",
+    "type": "string",
+    "hint": "未指定城市时的默认查询城市",
+    "default": "北京"
+  },
+  "enable_guest_search": {
+    "description": "启用嘉宾搜索",
+    "type": "bool",
+    "hint": "是否启用漫展嘉宾搜索功能",
+    "default": true
+  }
+}
